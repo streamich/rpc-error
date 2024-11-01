@@ -8,3 +8,15 @@ import {RpcError} from 'rpc-error';
 
 const error = RpcError.notFound();
 ```
+
+Create a public "internal error":
+
+```ts
+const publicError = RpcError.from(privateError);
+```
+
+Create error using a custom code:
+
+```ts
+const error = RpcError.create('CUSTOM_CODE');
+```
