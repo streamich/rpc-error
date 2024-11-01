@@ -18,5 +18,5 @@ const publicError = RpcError.from(privateError);
 Create error using a custom code:
 
 ```ts
-const error = RpcError.create('CUSTOM_CODE');
+const error = RpcError.create('CUSTOM_ERROR_CODE');
 ```
