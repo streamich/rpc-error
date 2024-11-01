@@ -77,8 +77,7 @@ export class RpcError extends Error implements IRpcError {
     message?: string,
     meta: unknown = undefined,
     originalError: unknown = undefined,
-  ): RpcError =>
-    new RpcError(message || code, code, RpcErrorCodes[code], undefined, meta || undefined, originalError);
+  ): RpcError => new RpcError(message || code, code, RpcErrorCodes[code], undefined, meta || undefined, originalError);
 
   public static create = (
     code: string,
@@ -86,8 +85,7 @@ export class RpcError extends Error implements IRpcError {
     errno: number = 0,
     meta: unknown = undefined,
     originalError: unknown = undefined,
-  ): RpcError =>
-    new RpcError(message || code, code, errno, undefined, meta || undefined, originalError);
+  ): RpcError => new RpcError(message || code, code, errno, undefined, meta || undefined, originalError);
 
   public static internal = (originalError: unknown, message = 'Internal Server Error'): RpcError =>
     RpcError.fromErrno(RpcErrorCodes.INTERNAL_ERROR, message, undefined, originalError);
