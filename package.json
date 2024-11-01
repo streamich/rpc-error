@@ -33,13 +33,13 @@
   ],
   "license": "Apache-2.0",
   "scripts": {
+    "test": "jest",
     "format": "biome format ./src",
     "format:fix": "biome format --write ./src",
     "lint": "biome lint ./src",
     "lint:fix": "biome lint --apply ./src",
     "clean": "npx rimraf@6 lib typedocs coverage gh-pages yarn-error.log db dist",
-    "build": "tsc --project tsconfig.build.json --module commonjs --target es2020 --outDir lib",
-    "test": "echo \"no tests\""
+    "build": "tsc --project tsconfig.build.json --module commonjs --target es2020 --outDir lib"
   },
   "peerDependencies": {},
   "peerDependenciesMeta": {},
@@ -48,6 +48,24 @@
     "@biomejs/biome": "^1.9.4",
     "tslib": "^2.8.1",
     "typescript": "^5.6.3",
-    "config-galore": "^1.0.0"
+    "config-galore": "^1.0.0",
+    "@types/jest": "^29.5.12",
+    "jest": "^29.7.0",
+    "ts-jest": "^29.1.2"
+  },
+  "jest": {
+    "verbose": true,
+    "testEnvironmentOptions": {
+      "url": "http://localhost/"
+    },
+    "moduleFileExtensions": [
+      "ts",
+      "js"
+    ],
+    "transform": {
+      "^.+\\.ts$": "ts-jest"
+    },
+    "transformIgnorePatterns": [],
+    "testRegex": ".*/(__tests__|__jest__|demo)/.*\\.(test|spec)\\.ts$"
   }
 }

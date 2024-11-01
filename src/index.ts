@@ -47,54 +47,64 @@ export enum RpcErrorCodes {
   /** When operation cannot be performed due to a conflict, error 409. */
   CONFLICT = 4,
 
-  INVALID_METHOD = 6,
-  INVALID_METHOD_NAME = 7,
-  NO_METHOD_SPECIFIED = 8,
-  METHOD_NOT_FOUND = 9,
-  STOP = 10,
-  DISCONNECT = 11,
-  BUFFER_OVERFLOW = 12,
+  METHOD_UNK = 5,
+  METHOD_INV = 6,
+  STOP = 7,
+  DISCONNECT = 8,
+  OVERFLOW = 9,
+  THROTTLE = 10,
+  AUTH = 11,
+  AUTHC = 12,
+  AUTHZ = 13,
 }
 
 export class RpcError extends Error implements IRpcError {
-  public static from(error: unknown): RpcError {
-    if (error instanceof RpcError) return error;
-    return RpcError.internal(error);
-  }
+  public static from = (error: unknown | Error, message?: string): RpcError =>
+    error instanceof RpcError ? error : RpcError.internal(error, message);
 
-  public static fromCode(
+  public static fromErrno = (
     errno: RpcErrorCodes,
     message = '',
     meta: unknown = undefined,
     originalError: unknown = undefined,
-  ): RpcError {
+  ): RpcError => {
     const code = RpcErrorCodes[errno];
     return new RpcError(message || code, code, errno, undefined, meta || undefined, originalError);
-  }
+  };
 
-  public static internal(originalError: unknown, message = 'Internal Server Error'): RpcError {
-    return RpcError.fromCode(RpcErrorCodes.INTERNAL_ERROR, message, undefined, originalError);
-  }
+  public static fromCode = (
+    code: keyof typeof RpcErrorCodes,
+    message?: string,
+    meta: unknown = undefined,
+    originalError: unknown = undefined,
+  ): RpcError =>
+    new RpcError(message || code, code, RpcErrorCodes[code], undefined, meta || undefined, originalError);
 
-  public static badRequest(message = 'Bad Request'): RpcError {
-    return RpcError.fromCode(RpcErrorCodes.BAD_REQUEST, message);
-  }
+  public static create = (
+    code: string,
+    message?: string,
+    errno: number = 0,
+    meta: unknown = undefined,
+    originalError: unknown = undefined,
+  ): RpcError =>
+    new RpcError(message || code, code, errno, undefined, meta || undefined, originalError);
 
-  public static notFound(message = 'Not Found'): RpcError {
-    return RpcError.fromCode(RpcErrorCodes.NOT_FOUND, message);
-  }
+  public static internal = (originalError: unknown, message = 'Internal Server Error'): RpcError =>
+    RpcError.fromErrno(RpcErrorCodes.INTERNAL_ERROR, message, undefined, originalError);
 
-  public static validation(message: string, meta?: unknown): RpcError {
-    return RpcError.fromCode(RpcErrorCodes.BAD_REQUEST, message, meta);
-  }
+  public static badRequest = (message = 'Bad Request', meta?: unknown, originalError?: unknown): RpcError =>
+    RpcError.fromErrno(RpcErrorCodes.BAD_REQUEST, message, meta, originalError);
 
-  public static conflict(message: string, meta?: unknown): RpcError {
-    return RpcError.fromCode(RpcErrorCodes.CONFLICT, message, meta);
-  }
+  public static notFound = (message = 'Not Found', meta?: unknown, originalError?: unknown): RpcError =>
+    RpcError.fromErrno(RpcErrorCodes.NOT_FOUND, message, meta, originalError);
 
-  public static isRpcError(error: unknown): error is RpcError {
-    return error instanceof RpcError;
-  }
+  public static validation = (message?: string, meta?: unknown, originalError?: unknown): RpcError =>
+    RpcError.fromErrno(RpcErrorCodes.BAD_REQUEST, message, meta, originalError);
+
+  public static conflict = (message?: string, meta?: unknown, originalError?: unknown): RpcError =>
+    RpcError.fromErrno(RpcErrorCodes.CONFLICT, message, meta, originalError);
+
+  public static isRpcError = (error: unknown): error is RpcError => error instanceof RpcError;
 
   constructor(
     public readonly message: string,
@@ -109,7 +119,6 @@ export class RpcError extends Error implements IRpcError {
     public readonly originalError: Error | unknown | undefined,
   ) {
     super(message);
-    if (message === code) this.code = undefined;
     Object.setPrototypeOf(this, RpcError.prototype);
   }
 
