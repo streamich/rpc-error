@@ -73,6 +73,7 @@ describe('.isRpcError()', () => {
   });
 
   test('returns false for non-RpcError', () => {
+    expect(RpcError.isRpcError(null)).toBe(false);
     expect(RpcError.isRpcError(new Error('adsf'))).toBe(false);
   });
 });

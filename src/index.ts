@@ -102,7 +102,12 @@ export class RpcError extends Error implements IRpcError {
   public static conflict = (message?: string, meta?: unknown, originalError?: unknown): RpcError =>
     RpcError.fromErrno(RpcErrorCodes.CONFLICT, message, meta, originalError);
 
-  public static isRpcError = (error: unknown): error is RpcError => error instanceof RpcError;
+  public static isRpcError = (error: unknown): error is RpcError =>
+    error instanceof Error &&
+    (error as any)[Symbol.toStringTag] === 'RpcError' &&
+    typeof (error as any).toJson === 'function';
+
+  [Symbol.toStringTag] = 'RpcError';
 
   constructor(
     public readonly message: string,
