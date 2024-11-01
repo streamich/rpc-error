@@ -37,7 +37,7 @@
     "format:fix": "biome format --write ./src",
     "lint": "biome lint ./src",
     "lint:fix": "biome lint --apply ./src",
-    "clean": "rimraf lib typedocs coverage gh-pages yarn-error.log db dist",
+    "clean": "npx rimraf@6 lib typedocs coverage gh-pages yarn-error.log db dist",
     "build": "tsc --project tsconfig.build.json --module commonjs --target es2020 --outDir lib",
     "test": "echo \"no tests\""
   },
